@@ -70,6 +70,7 @@ function install_files() {
 	# download the jenkins JNLP slave script
 	sudo curl --silent -L --url ${DOWNLOADS_PATH}/slave.jnlp.sh -o ${SERVICE_WRKSPC}/slave.jnlp.sh
 	sudo chmod 755 ${SERVICE_WRKSPC}/slave.jnlp.sh
+	sudo sed -i -e "s|^JENKINS_CONF=.*|JENKINS_CONF=${SERVICE_CONF}|" ${SERVICE_WRKSPC}/slave.jnlp.sh
 	# download the jenkins JNLP security helper script
 	sudo curl --silent -L --url ${DOWNLOADS_PATH}/security.sh -o ${SERVICE_WRKSPC}/security.sh
 	sudo chmod 755 ${SERVICE_WRKSPC}/security.sh
