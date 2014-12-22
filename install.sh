@@ -221,7 +221,6 @@ if [[ "${CONFIRM}" =~ ^[Yy] ]] ; then
 	install_files
 	echo "Configuring daemon..."
 	configure_daemon
-	configure_adc
 	write_config
 	start_daemon
 else
