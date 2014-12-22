@@ -21,10 +21,9 @@ OSX_KEYCHAIN="login.keychain"
 OSX_KEYCHAIN_PASS=""
 JAVA_ARGS=${JAVA_ARGS:-""}
 INSTALL_TMP=`mktemp -d -q -t org.jenkins-ci.slave.jnlp`
-DOWNLOADS_PATH=https://raw.github.com/rhwood/jenkins-slave-osx/master
+DOWNLOADS_PATH=https://raw.githubusercontent.com/royingantaginting/jenkins-slave-osx/master
 
 function create_user() {
-	# see if user exists
 	if dscl /Local/Default list /Users | grep -q ${SERVICE_USER} ; then
 		echo "Using pre-existing service account ${SERVICE_USER}"
 		SERVICE_HOME=$( dscl /Local/Default read /Users/${SERVICE_USER} NFSHomeDirectory | awk '{ print $2 }' )
@@ -34,14 +33,13 @@ function create_user() {
 		if dscl /Local/Default list /Groups | grep -q ${SERVICE_GROUP} ; then
 			NEXT_GID=$( dscl /Local/Default list /Groups gid | grep ${SERVICE_GROUP} | awk '{ print $2 }' )
 		else
-			# create jenkins group
 			NEXT_GID=$((`dscl /Local/Default list /Groups gid | awk '{ print $2 }' | sort -n | grep -v ^[5-9] | tail -n1` + 1))
 			sudo dscl /Local/Default create /Groups/${SERVICE_GROUP}
 			sudo dscl /Local/Default create /Groups/${SERVICE_GROUP} PrimaryGroupID $NEXT_GID
 			sudo dscl /Local/Default create /Groups/${SERVICE_GROUP} Password \*
 			sudo dscl /Local/Default create /Groups/${SERVICE_GROUP} RealName 'Jenkins Node Service'
 		fi
-		# create jenkins user
+
 		NEXT_UID=$((`dscl /Local/Default list /Users uid | awk '{ print $2 }' | sort -n | grep -v ^[5-9] | tail -n1` + 1))
 		sudo dscl /Local/Default create /Users/${SERVICE_USER}
 		sudo dscl /Local/Default create /Users/${SERVICE_USER} UniqueID $NEXT_UID
@@ -57,23 +55,21 @@ function create_user() {
 }
 
 function install_files() {
-	# create the jenkins home dir
+
 	if [ ! -d ${SERVICE_WRKSPC} ] ; then
 		sudo mkdir -p ${SERVICE_WRKSPC}
 	fi
-	# download the LaunchDaemon
+
 	sudo curl --silent -L --url ${DOWNLOADS_PATH}/org.jenkins-ci.slave.jnlp.plist -o ${SERVICE_WRKSPC}/org.jenkins-ci.slave.jnlp.plist
 	sudo sed -i '' "s#\${JENKINS_HOME}#${SERVICE_WRKSPC}#g" ${SERVICE_WRKSPC}/org.jenkins-ci.slave.jnlp.plist
 	sudo sed -i '' "s#\${JENKINS_USER}#${SERVICE_USER}#g" ${SERVICE_WRKSPC}/org.jenkins-ci.slave.jnlp.plist
 	sudo rm -f /Library/LaunchDaemons/org.jenkins-ci.slave.jnlp.plist
 	sudo install -o root -g wheel -m 644 ${SERVICE_WRKSPC}/org.jenkins-ci.slave.jnlp.plist /Library/LaunchDaemons/org.jenkins-ci.slave.jnlp.plist
-	# download the jenkins JNLP slave script
+	
 	sudo curl --silent -L --url ${DOWNLOADS_PATH}/slave.jnlp.sh -o ${SERVICE_WRKSPC}/slave.jnlp.sh
 	sudo chmod 755 ${SERVICE_WRKSPC}/slave.jnlp.sh
 	sudo sed -i -e "s|^JENKINS_CONF=.*|JENKINS_CONF=${SERVICE_CONF}|" ${SERVICE_WRKSPC}/slave.jnlp.sh
-	# download the jenkins JNLP security helper script
-	sudo curl --silent -L --url ${DOWNLOADS_PATH}/security.sh -o ${SERVICE_WRKSPC}/security.sh
-	sudo chmod 755 ${SERVICE_WRKSPC}/security.sh
+
 	# jenkins should own jenkin's home directory and all its contents
 	sudo chown -R ${SERVICE_USER}:${SERVICE_GROUP} ${SERVICE_HOME}
 	# create a logging space
@@ -93,11 +89,7 @@ function process_args {
 		MASTER_HTTP_PORT=${HTTP_PORT}
 		MASTER_USER=${MASTER_USER:-$JENKINS_USER}
 	fi
-	if [ -f ${SERVICE_HOME}/Library/.keychain_pass ]; then
-		sudo chmod 666 ${SERVICE_HOME}/Library/.keychain_pass
-		source ${SERVICE_HOME}/Library/.keychain_pass
-		sudo chmod 400 ${SERVICE_HOME}/Library/.keychain_pass
-	fi
+
 	while [ $# -gt 0 ]; do
 		case $1 in
 			--node=*) SLAVE_NODE="${1#*=}" ;;
