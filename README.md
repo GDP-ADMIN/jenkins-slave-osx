@@ -5,7 +5,7 @@ Scripts to create and run a [Jenkins](http://jenkins-ci.org) slave via [Java Web
 
 
 ## Quick Start
-`bash <( curl -L https://raw.github.com/rhwood/jenkins-slave-osx/master/install.sh )`
+`bash <( curl -L https://raw.githubusercontent.com/royingantaginting/jenkins-slave-osx/master/install.sh )`
 
 
 
