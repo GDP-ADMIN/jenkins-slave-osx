@@ -13,7 +13,6 @@ JAVA_ARGS='-Djava.awt.headless=true'
 JAVA_ARGS_LOG=''
 JAVA_TRUSTSTORE=${JENKINS_HOME}/.keystore
 JAVA_TRUSTSTORE_PASS=''
-AGENT=''
 
 # called when unloaded by launchctl
 function unload() {
@@ -35,12 +34,6 @@ trap "unload" HUP INT TERM
 if [ -f ${JENKINS_CONF} ]; then
 	chmod 400 ${JENKINS_CONF}
 	source ${JENKINS_CONF}
-fi
-
-# 'launchctl list org.jenkins-ci.slave.jnlp' exits true if this was run by a
-# LaunchAgent, and exits false if this was run by a LaunchDaemon
-if launchctl list org.jenkins-ci.slave.jnlp 2>1 >/dev/null ; then
-	AGENT="--agent"
 fi
 
 [ ! -z $HTTP_PORT ] && HTTP_PORT=":${HTTP_PORT}"
@@ -74,17 +67,8 @@ done
 
 echo "Launching slave process at ${JENKINS_JNLP_URL}"
 RESULT=-1
-# If we use a trustStore for the Jenkins Master certificates, we need to pass it
-# and its password to the java process that runs the slave. The password is stored
-# in the OS X Keychain that we use for other purposes.
-if [[ -f $JAVA_TRUSTSTORE ]]; then
-	JAVA_TRUSTSTORE_PASS=$( ${JENKINS_WRKSPC}/security.sh get-password --account=`whoami` --service=java_truststore ${AGENT} )
-	JAVA_ARGS_LOG="${JAVA_ARGS} -Djavax.net.ssl.trustStore=${JAVA_TRUSTSTORE} -Djavax.net.ssl.trustStorePassword=********"
-	JAVA_ARGS="${JAVA_ARGS} -Djavax.net.ssl.trustStore=${JAVA_TRUSTSTORE} -Djavax.net.ssl.trustStorePassword=${JAVA_TRUSTSTORE_PASS}" 
-fi
 # The user and API token are required for Jenkins >= 1.498
 if [ ! -z ${JENKINS_USER} ]; then
-	JENKINS_TOKEN=$( ${JENKINS_WRKSPC}/security.sh get-password --account=${JENKINS_USER} --service="${JENKINS_SLAVE}" ${AGENT} )
 	JENKINS_USER="-jnlpCredentials ${JENKINS_USER}:"
 fi
 echo "Calling java ${JAVA_ARGS_LOG} -jar ${JENKINS_WRKSPC}/slave.jar -jnlpUrl ${JENKINS_JNLP_URL} ${JENKINS_USER}********"
