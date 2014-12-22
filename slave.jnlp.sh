@@ -11,8 +11,6 @@ JENKINS_USER=''
 JENKINS_TOKEN=''
 JAVA_ARGS='-Djava.awt.headless=true'
 JAVA_ARGS_LOG=''
-JAVA_TRUSTSTORE=${JENKINS_HOME}/.keystore
-JAVA_TRUSTSTORE_PASS=''
 
 # called when unloaded by launchctl
 function unload() {
