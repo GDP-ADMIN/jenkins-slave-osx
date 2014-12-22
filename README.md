@@ -26,6 +26,7 @@ The install script has the following options:
 * `--master=URL` to specify the Jenkins Master on the command line. *Optional;* the installer prompts for this if not specified on the command line.
 * `--node=NAME` to specify the Slave's node name. *Optional;* this defaults to the OS X hostname and is verified by the installer.
 * `--user=NAME` to specify the Jenkins user who authenticates the slave. *Optional;* this defaults to your username on the OS X slave and is verified by the installer.
+* `--token=TOKEN` to specify the Jenkins user token who authenticates the slave. *Optional;* the installer prompts for this if not specified on the command line
 
 
 
