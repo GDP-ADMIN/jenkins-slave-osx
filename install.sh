@@ -161,6 +161,7 @@ function write_config {
 	echo "JENKINS_MASTER=${MASTER}" >> ${CONF_TMP}
 	echo "HTTP_PORT=${MASTER_HTTP_PORT}" >> ${CONF_TMP}
 	echo "JENKINS_USER=${MASTER_USER}" >> ${CONF_TMP}
+	echo "JENKINS_TOKEN=${SLAVE_TOKEN}" >> ${CONF_TMP}
 	echo "JAVA_ARGS=\"${JAVA_ARGS}\"" >> ${CONF_TMP}
 	sudo mv ${CONF_TMP} ${SERVICE_CONF}
 	# secure the config file
