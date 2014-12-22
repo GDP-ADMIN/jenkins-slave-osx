@@ -17,8 +17,6 @@ MASTER=""
 MASTER_HTTP_PORT=""
 SLAVE_NODE=""
 SLAVE_TOKEN=""
-OSX_KEYCHAIN="login.keychain"
-OSX_KEYCHAIN_PASS=""
 JAVA_ARGS=${JAVA_ARGS:-""}
 INSTALL_TMP=`mktemp -d -q -t org.jenkins-ci.slave.jnlp`
 DOWNLOADS_PATH=https://raw.githubusercontent.com/royingantaginting/jenkins-slave-osx/master
@@ -214,12 +212,6 @@ function rawurlencode() {
 
 CONFIRM=${CONFIRM:-"yes"}
 if [[ "${CONFIRM}" =~ ^[Yy] ]] ; then
-	echo
-	echo "Verifying that you may use sudo. You may be prompted for your password"
-	if ! sudo -v ; then
-		echo "Unable to use sudo. Aborting installation"
-		cleanup 1
-	fi
 	create_user
 	
 	# $@ must be quoted in order to handle arguments that contain spaces
