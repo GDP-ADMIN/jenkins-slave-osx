@@ -62,7 +62,7 @@ function install_files() {
 	sudo sed -i '' "s#\${JENKINS_HOME}#${SERVICE_WRKSPC}#g" ${SERVICE_WRKSPC}/org.jenkins-ci.slave.jnlp.plist
 	sudo sed -i '' "s#\${JENKINS_USER}#${SERVICE_USER}#g" ${SERVICE_WRKSPC}/org.jenkins-ci.slave.jnlp.plist
 	sudo rm -f /Library/LaunchDaemons/org.jenkins-ci.slave.jnlp.plist
-	sudo install -o root -g wheel -m 644 ${SERVICE_WRKSPC}/org.jenkins-ci.slave.jnlp.plist /Library/LaunchDaemons/org.jenkins-ci.slave.jnlp.plist
+	sudo install -o ${SERVICE_USER} -g ${SERVICE_GROUP} -m 644 ${SERVICE_WRKSPC}/org.jenkins-ci.slave.jnlp.plist ${SERVICE_HOME}/Library/LaunchAgents/org.jenkins-ci.slave.jnlp.plist
 	
 	sudo curl --silent -L --url ${DOWNLOADS_PATH}/slave.jnlp.sh -o ${SERVICE_WRKSPC}/slave.jnlp.sh
 	sudo chmod 755 ${SERVICE_WRKSPC}/slave.jnlp.sh
